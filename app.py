@@ -20,7 +20,6 @@ def index():
     mars=mongo.db.mars.find_one() #find mars collection in db
     return render_template("index.html", mars=mars) #return template and use mars collection in MongoDB
 
-
 # Route for scraping
 @app.route("/scrape")
 def scrape():
@@ -29,7 +28,6 @@ def scrape():
     #update db; .update(query_parameter (empty JSON), data, options); upsert=create new docmt if one doesn't exist
     mars.update({}, mars_data, upsert=True)  
     return redirect('/',code=302)  #redirects user back to homepage; return message when successful
-
 
 if __name__ == "__main__":
     app.run()
