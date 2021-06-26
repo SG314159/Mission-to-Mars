@@ -1,6 +1,7 @@
 # Web scraping - Module Section 10.5.3
 
 # imports
+from sys import executable
 from splinter import Browser
 from bs4 import BeautifulSoup as soup
 from webdriver_manager.chrome import ChromeDriverManager
@@ -8,7 +9,7 @@ import pandas as pd
 import datetime as dt
 
 def scrape_all():
-    #initiate headless driver for deployment
+    #browser=Browser('chrome', executable_path="chromedriver", headless=True)
     executable_path={'executable_path':ChromeDriverManager().install()}
     browser=Browser('chrome', **executable_path, headless=True)
 
@@ -20,6 +21,7 @@ def scrape_all():
         "news_paragraph": news_paragraph,
         "featured_image": featured_image(browser),
         "facts": mars_facts(),
+        "hemispheres":hemisphere_images(browser),
         "last_modified": dt.datetime.now()
     }
 
@@ -81,6 +83,22 @@ def mars_facts():
     #Convert df into html format and add bootstrap
     return df.to_html(classes="table table-striped")
 
+def hemisphere_images(browser):
+    # Scrape the website for hemisphere images; adapted from Deliverable 1 code
+    url = 'https://marshemispheres.com/'
+    browser.visit(url)
+    hemisphere_image_urls = []
+    for i in range(4):
+        hemispheres={}  # Will store the url and the title for each hemisphere
+        title=browser.find_by_css('a.product-item h3')[i].text
+        browser.find_by_css('a.product-item h3')[i].click()
+        page=browser.links.find_by_text('Sample').first
+        image_url=page['href']
+        hemispheres['img_url']=image_url  # Add the two entries to the dictionary
+        hemispheres['title']=title
+        hemisphere_image_urls.append(hemispheres)  # Add the dict to the list
+        browser.back()
+    return hemisphere_image_urls
 
 if __name__=="__main__":
     print(scrape_all())

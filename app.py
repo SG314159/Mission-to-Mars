@@ -23,13 +23,14 @@ def index():
 # Route for scraping
 @app.route("/scrape")
 def scrape():
+    #print("start of scrape")
     mars=mongo.db.mars   # access the Mongo database
     mars_data=scraping.scrape_all()   #scrape new data using the script
-    #update db; .update(query_parameter (empty JSON), data, options); upsert=create new docmt if one doesn't exist
+    #print("end of scrape")
     mars.update({}, mars_data, upsert=True)  
     return redirect('/',code=302)  #redirects user back to homepage; return message when successful
 
 if __name__ == "__main__":
-    app.run()
+    app.run(debug=True)
 
 
